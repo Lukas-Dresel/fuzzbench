@@ -38,7 +38,8 @@ RUN rustup default nightly-2022-09-18
 RUN cd /tmp/ &&                          \
     wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh &&                  \
-    ./llvm.sh 12
+    ./llvm.sh 12 &&                     \
+    ./llvm.sh 15
 
 RUN update-alternatives \
     --install  /usr/lib/llvm              llvm             /usr/lib/llvm-12  20        \
@@ -148,13 +149,14 @@ RUN mkdir -p /libs_symcc
 
 ENV PATH="/usr/lib/llvm-12/bin/:$PATH"
 
-COPY id_rsa /root/.ssh/id_rsa && echo "Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rsa\n" >> /root/.ssh/config
+COPY id_rsa /root/.ssh/id_rsa
+RUN echo 'Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rsa\n' >> /root/.ssh/config
 
 # Building MCTSSE
 RUN ls -l && echo rerun=1
-RUN git clone -b main --recurse-submodules git@github.com:Lukas-Dresel/mctsse/ /mctsse
+RUN git clone -b checkpoint/symcts_stable_old_version_2023-05-16 --recurse-submodules git@github.com:shellphish-support-syndicate/mctsse/ /mctsse
 RUN git clone --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
-RUN git clone -b feat/symcts https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+RUN git clone -b checkpoint/symcts_stable_old_version_2023-05-16 https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
 
 
 
@@ -165,19 +167,23 @@ RUN cd /mctsse/repos/LibAFL/libafl/ && \
     git fetch --all && \
     echo 1 && \
     git checkout checkpoint/symcts_stable_old_version_2023-05-16
-RUN cd /mctsse/ && git checkout checkpoint/symcts_stable_old_version_2023-05-16 && \
+RUN cd /mctsse/ && \
+    git pull && git fetch --all && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     cargo update -p home@0.5.11 --precise 0.5.9 && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
-    cargo update -p home@0.5.11 --precise 0.5.9
+    cargo update -p home@0.5.11 --precise 0.5.9 && \
+    cargo update -p clap@4.5.23 --precise 4.4.18
 
+RUN apt-get install -y libpolly-15-dev
 
-
-    
+# RUN which llvm-config && which llvm-config-12 && which llvm-config-15 && exit 1
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     cargo build --release && \
     cp /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/libSymRuntime.so /libs_symcc/
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release --bin symcts
 
 
 # Build libcxx with the SymCC compiler so we can instrument C++ code.
