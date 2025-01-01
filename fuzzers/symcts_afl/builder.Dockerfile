@@ -148,11 +148,33 @@ RUN mkdir -p /libs_symcc
 
 ENV PATH="/usr/lib/llvm-12/bin/:$PATH"
 
+COPY id_rsa /root/.ssh/id_rsa && echo "Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rsa\n" >> /root/.ssh/config
+
 # Building MCTSSE
 RUN ls -l && echo rerun=1
-RUN git clone -b main --depth 1 --recurse-submodules https://github.com/Lukas-Dresel/mctsse/ /mctsse
+RUN git clone -b main --recurse-submodules git@github.com:Lukas-Dresel/mctsse/ /mctsse
 RUN git clone --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
 RUN git clone -b feat/symcts https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+
+
+
+
+RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
+RUN cd /mctsse/repos/LibAFL/libafl/ && \
+    git pull && \
+    git fetch --all && \
+    echo 1 && \
+    git checkout checkpoint/symcts_stable_old_version_2023-05-16
+RUN cd /mctsse/ && git checkout checkpoint/symcts_stable_old_version_2023-05-16 && \
+    cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
+    cargo update -p home@0.5.11 --precise 0.5.9 && \
+    cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo update -p home@0.5.11 --precise 0.5.9
+
+
+
+    
+
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     cargo build --release && \
     cp /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/libSymRuntime.so /libs_symcc/
@@ -189,28 +211,28 @@ RUN git clone --depth=1 https://github.com/madler/zlib /zlib/ && cd /zlib && \
     make -j$(nproc) && \
     cp libz.a /libs_symcc/libz.a
 
-RUN git clone --depth=1 https://github.com/Lukas-Dresel/symqemu "/symqemu"
+# RUN git clone --depth=1 https://github.com/Lukas-Dresel/symqemu "/symqemu"
 
-# build SymQEMU
-RUN cd "/symqemu" && \
-    mkdir -p build && \
-    export SYMCC_RUNTIME_DIR=/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/ && \
-    cd /symqemu/build && \
-    ../configure                                                  \
-      --static                                                    \
-      --audio-drv-list=                                           \
-      --disable-bluez                                             \
-      --disable-sdl                                               \
-      --disable-gtk                                               \
-      --disable-vte                                               \
-      --disable-opengl                                            \
-      --disable-virglrenderer                                     \
-      --disable-werror                                            \
-      --target-list=x86_64-linux-user                             \
-      --enable-capstone=git                                       \
-      --symcc-source="/symcc/"                                    \
-      --symcc-runtime-dir="/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/" && \
-    make -j$(nproc) && cp /symqemu/build/x86_64-linux-user/symqemu-x86_64 /out/
+# # build SymQEMU
+# RUN cd "/symqemu" && \
+#     mkdir -p build && \
+#     export SYMCC_RUNTIME_DIR=/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/ && \
+#     cd /symqemu/build && \
+#     ../configure                                                  \
+#       --static                                                    \
+#       --audio-drv-list=                                           \
+#       --disable-bluez                                             \
+#       --disable-sdl                                               \
+#       --disable-gtk                                               \
+#       --disable-vte                                               \
+#       --disable-opengl                                            \
+#       --disable-virglrenderer                                     \
+#       --disable-werror                                            \
+#       --target-list=x86_64-linux-user                             \
+#       --enable-capstone=git                                       \
+#       --symcc-source="/symcc/"                                    \
+#       --symcc-runtime-dir="/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/" && \
+#     make -j$(nproc) && cp /symqemu/build/x86_64-linux-user/symqemu-x86_64 /out/
 
 
 RUN git clone --depth 1 https://github.com/Lukas-Dresel/symcc_libc_preload /mctsse/repos/symcc_libc_preload
