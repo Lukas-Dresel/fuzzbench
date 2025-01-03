@@ -20,8 +20,9 @@ FUZZERS=(symcc_aflplusplus symsan honggfuzz libfuzzer symcts symcts_afl symcts_s
 
 # TARGETS=(openssl_x509 re2-2014-12-09 vorbis-2017-12-11 woff2-2016-05-06 zlib_zlib_uncompress_fuzzer)
 
-FUZZERS=(aflplusplus symcts symcts_symqemu_afl symcts_afl symcts_afl_sampling symsan symcc_aflplusplus)
-TARGETS=(libxml2_xml bloaty_fuzz_target libpng_libpng_read_fuzzer)
+FUZZERS=(aflplusplus symcts symcts_symqemu symcts_symqemu_afl symcts_afl symsan symcc_aflplusplus)
+TARGETS=(bloaty_fuzz_target)
+TARGETS=(curl_curl_fuzzer_http)
 
 EXPERIMENT_NAME="test-$(date +%Y%m%d-%H%M%S)"
 
@@ -33,13 +34,11 @@ EXPERIMENT_NAME="test-$(date +%Y%m%d-%H%M%S)"
 PYTHON3=$(which python3.10 || which python3.8 || which python3)
 
 PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
-    --no-seeds \
-    --no-dictionaries \
     --allow-uncommitted-changes \
     --experiment-config experiment_config_test.yaml \
     --concurrent-builds 1 \
-    --runners-cpus 60 \
-    --measurers-cpus 36 \
+    --runners-cpus 64 \
+    --measurers-cpus 32 \
     --experiment-name $EXPERIMENT_NAME \
     --fuzzers ${FUZZERS[@]} \
     --benchmarks ${TARGETS[@]} \

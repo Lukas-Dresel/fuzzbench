@@ -52,10 +52,16 @@ def _initialize_cloud_clients():
     _error_reporting_client = error_reporting.Client()
 
 
-def initialize(name='fuzzbench', default_extras=None, log_level=logging.INFO):
+def initialize(name='fuzzbench', default_extras=None, log_level=logging.DEBUG):
     """Initializes stackdriver logging if running on Google Cloud."""
     logging.getLogger().setLevel(log_level)
     logging.getLogger().addFilter(LengthFilter())
+
+    # add formatter which includes the timestamp before each log message
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
+    logging.getLogger().addHandler(handler)
 
     # Don't log so much with SQLalchemy to avoid stressing the logging library.
     # See crbug.com/1044343.

@@ -162,6 +162,9 @@ def dispatcher_main():
 
     measurer_main_process.start()
 
+    with open('/tmp/thread_info.txt', 'w') as f:
+        f.write(f'{scheduler_loop_thread.native_id=} {measurer_main_process.pid=} dispatcher pid={os.getpid()}')
+
     is_complete = False
     while True:
         time.sleep(LOOP_WAIT_SECONDS)
