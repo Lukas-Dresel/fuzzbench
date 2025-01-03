@@ -219,6 +219,7 @@ RUN cd /mctsse/repos/symcc_libc_preload && \
     cp /mctsse/repos/symcc_libc_preload/libc_symcc_preload.a /libs_symcc/
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    git pull && \
     cargo build --release && \
     cp ./target/release/symcts /out/symcts/
 

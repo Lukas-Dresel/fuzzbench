@@ -45,8 +45,6 @@ PYTHON3=$(which python3.10 || which python3.8 || which python3)
     # --no-dictionaries \
 
 PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
-    --no-seeds \
-    --no-dictionaries \
     --allow-uncommitted-changes \
     --experiment-config experiment_config_symcts.yaml \
     --concurrent-builds 1 \

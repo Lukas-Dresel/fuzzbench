@@ -101,10 +101,10 @@ RUN cd /afl-base/ && \
 # COPY src/afl_driver.cpp /afl/afl_driver.cpp
 RUN cd /afl-lukas/ && \
     unset CFLAGS CXXFLAGS && \
-    export CC=clang AFL_NO_X86=1 && \
-    (LLVM_CONFIG=llvm-config-12 make -j$(nproc) -k NO_NYX=1 NO_PYTHON=1 source-only || true ) && \
-    (LLVM_CONFIG=llvm-config-12 make install -k || true) && \
-    (cd utils/aflpp_driver && LLVM_CONFIG=llvm-config-12 make && cp libAFLDriver.a /libAFLDriver-lukas.a)
+    export CC=clang-15 CXX=clang++-15 AFL_NO_X86=1 && \
+    (LLVM_CONFIG=llvm-config-15 make -j$(nproc) -k NO_NYX=1 NO_PYTHON=1 source-only || true ) && \
+    (LLVM_CONFIG=llvm-config-15 make install -k || true) && \
+    (cd utils/aflpp_driver && LLVM_CONFIG=llvm-config-15 make && cp libAFLDriver.a /libAFLDriver-lukas.a)
 
 
 ENV CFLAGS=""
@@ -122,6 +122,7 @@ ENV LIBRARY_PATH="/z3/lib/:$LIBRARY_PATH"
 
 RUN git clone https://github.com/Lukas-Dresel/symcc.git /symcc && \
     cd /symcc && \
+    git checkout eeb643b0462edaf54c21077e9aaa28e86e932559 && \
     git submodule init && \
     git submodule update
 
@@ -153,20 +154,17 @@ COPY id_rsa /root/.ssh/id_rsa
 RUN echo 'Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rsa\n' >> /root/.ssh/config
 
 # Building MCTSSE
-RUN ls -l && echo rerun=1
+RUN ls -l && echo rerun=2
 RUN git clone -b checkpoint/symcts_stable_old_version_2023-05-16 --recurse-submodules git@github.com:shellphish-support-syndicate/mctsse/ /mctsse
 RUN git clone --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
-RUN git clone -b checkpoint/symcts_stable_old_version_2023-05-16 https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
-
-
-
+RUN git clone -b checkpoint/symcts_stable_old_version_2023-05-16-newer https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
 
 RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
 RUN cd /mctsse/repos/LibAFL/libafl/ && \
     git pull && \
     git fetch --all && \
-    echo 1 && \
-    git checkout checkpoint/symcts_stable_old_version_2023-05-16
+    echo 3 && \
+    git checkout checkpoint/symcts_stable_old_version_2023-05-16-newer
 RUN cd /mctsse/ && \
     git pull && git fetch --all && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
@@ -183,7 +181,8 @@ RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     cargo build --release && \
     cp /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/libSymRuntime.so /libs_symcc/
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
-    cargo build --release --bin symcts
+    rm -rf /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer/src/bin/cov_over_time.rs && \
+    cargo build --release
 
 
 # Build libcxx with the SymCC compiler so we can instrument C++ code.
@@ -206,6 +205,11 @@ RUN mkdir /libcxx_native_install && mkdir /libcxx_native_build && \
     ninja distribution && \
     ninja install-distribution && \
     unset SYMCC_REGULAR_LIBCXX SYMCC_NO_SYMBOLIC_INPUT
+
+RUN echo rerun=1 && \
+    cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    git stash && git pull && git fetch --all && git stash pop && \
+    cargo build --release
 
 
 # we have to build zlib instrumented because of all the callbacks being passed back and forth because SymCC does not

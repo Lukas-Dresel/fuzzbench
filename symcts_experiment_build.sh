@@ -54,7 +54,11 @@ do
     MAKEFILETARGETS+=(build-coverage-$target)
     for fuzzer in ${FUZZERS[@]}
     do
-        MAKEFILETARGETS+=(build-$fuzzer-$target)
+	if [ "$fuzzer" = "symcc_aflplusplus" ] && [ "$target" = "sqlite3_ossfuzz" ]; then
+	    echo skipping
+    	else
+	    MAKEFILETARGETS+=(build-$fuzzer-$target)
+	fi
     done
 done
 

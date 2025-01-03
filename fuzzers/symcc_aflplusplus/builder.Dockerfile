@@ -25,7 +25,7 @@ RUN apt-get update && \
 COPY ./preinstall.sh /tmp/
 RUN chmod +x /tmp/preinstall.sh
 RUN /tmp/preinstall.sh
-ENV PATH="/usr/bin/:{$PATH}"
+ENV PATH "/usr/bin/:{$PATH}"
 
 # Download and compile afl++.
 RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl && \
@@ -52,7 +52,7 @@ RUN if which rustup; then rustup self uninstall -y; fi
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /rustup.sh && \
     sh /rustup.sh -y
 
-ENV PATH="/root/.cargo/bin:${PATH}"
+ENV PATH "/root/.cargo/bin:${PATH}"
 RUN rustup default nightly-2022-09-18
 
 
@@ -63,8 +63,8 @@ RUN wget -qO /tmp/z3x64.zip https://github.com/Z3Prover/z3/releases/download/z3-
      rm -f /tmp/*.zip && \
      ldconfig
 
-ENV CFLAGS=""
-ENV CXXFLAGS=""
+ENV CFLAGS ""
+ENV CXXFLAGS ""
 
 COPY adacc_atexit_not_preserving_return_code.patch /tmp/
 
@@ -88,7 +88,10 @@ RUN cd / && \
     export SYMCC_PC=1 && \
     ../build/symcc -c ./libfuzz-harness-proxy.c -o /libfuzzer-harness.o && \
     cd ../ && echo "[+] Installing cargo now 4" && \
-    cargo install --path util/symcc_fuzzing_helper
+    cd util/symcc_fuzzing_helper && \
+    cargo update -p unicode-width@0.1.7 --precise 0.1.7 && \
+    cd ../../ && \
+    cargo install --locked --path util/symcc_fuzzing_helper
 
 RUN mkdir -p /rust/bin/ && cp /symcc/util/symcc_fuzzing_helper/target/release/symcc_fuzzing_helper /rust/bin/
 
