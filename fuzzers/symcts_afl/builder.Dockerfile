@@ -166,14 +166,17 @@ RUN cd /mctsse/repos/LibAFL/libafl/ && \
     git fetch --all && \
     echo 3 && \
     git checkout fixed/symcts-4d
+COPY runtime_Cargo.lock /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/Cargo.lock
+COPY fuzzer_Cargo.lock /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer/Cargo.lock
 RUN cd /mctsse/ && \
     git pull && git fetch --all && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     set -x && \
-    cargo update -p which --precise 4.4.0 && \
     echo "runtime reconfigured" && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
-    cargo update -p clap@4.5.23 --precise 3.2.25
+    echo "fuzzer reconfigured"
+
+#cargo update -p which --precise 4.4.0 && \
 
 RUN apt-get install -y libpolly-15-dev
 
