@@ -75,10 +75,11 @@ RUN update-alternatives \
 
 RUN echo "rerun=24"
 RUN git clone https://github.com/Lukas-Dresel/AFLplusplus/ /afl-lukas && \
-    cd /afl-lukas && git checkout feat/larger_counters
+    cd /afl-lukas && git checkout fixed/symcts-4d
 
 
-RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/
+RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/ && \
+    cd /afl-base/ && git checkout 8e1df8e53d359f2858168a276c46d1113d4102f2
 
 
 # Prepare output dirs
@@ -121,6 +122,7 @@ ENV LIBRARY_PATH="/z3/lib/:$LIBRARY_PATH"
 
 RUN git clone https://github.com/Lukas-Dresel/symcc.git /symcc && \
     cd /symcc && \
+    git checkout fixed/symcts-4d && \
     git submodule init && \
     git submodule update
 
@@ -148,11 +150,14 @@ RUN mkdir -p /libs_symcc
 
 ENV PATH="/usr/lib/llvm-12/bin/:$PATH"
 
+COPY id_rsa /root/.ssh/id_rsa
+RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
+
 # Building MCTSSE
 RUN ls -l && echo rerun=1
-RUN git clone -b main --depth 1 --recurse-submodules https://github.com/Lukas-Dresel/mctsse/ /mctsse
-RUN git clone --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
-RUN git clone -b feat/symcts https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+RUN git clone -b fixed/symcts-4d --depth 1 --recurse-submodules git@github.com:Lukas-Dresel/mctsse/ /mctsse
+RUN git clone -b fixed/symcts-4d --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
+RUN git clone -b pin/symcts-4d https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     cargo build --release && \
     cp /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/libSymRuntime.so /libs_symcc/
@@ -189,7 +194,7 @@ RUN git clone --depth=1 https://github.com/madler/zlib /zlib/ && cd /zlib && \
     make -j$(nproc) && \
     cp libz.a /libs_symcc/libz.a
 
-RUN git clone --depth=1 https://github.com/Lukas-Dresel/symqemu "/symqemu"
+RUN git clone -b fixed/symcts-4d --depth=1 https://github.com/Lukas-Dresel/symqemu "/symqemu"
 
 # build SymQEMU
 RUN cd "/symqemu" && \
@@ -213,7 +218,7 @@ RUN cd "/symqemu" && \
     make -j$(nproc) && cp /symqemu/build/x86_64-linux-user/symqemu-x86_64 /out/
 
 
-RUN git clone --depth 1 https://github.com/Lukas-Dresel/symcc_libc_preload /mctsse/repos/symcc_libc_preload
+RUN git clone -b fixed/symcts-4d --depth 1 https://github.com/Lukas-Dresel/symcc_libc_preload /mctsse/repos/symcc_libc_preload
 RUN cd /mctsse/repos/symcc_libc_preload && \
     make CC=/symcc/build/symcc libc_symcc_preload.a && \
     cp /mctsse/repos/symcc_libc_preload/libc_symcc_preload.a /libs_symcc/
