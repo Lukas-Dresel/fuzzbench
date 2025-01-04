@@ -44,6 +44,11 @@ PYTHON3=$(which python3.10 || which python3.8 || which python3)
     # --no-seeds \
     # --no-dictionaries \
 
+
+REPORT_DIR="/nvme/lukas/fuzzbench/report-data/$EXPERIMENT_NAME"
+mkdir -p "$REPORT_DIR"
+cp fuzzers/symcts_afl/builder.Dockerfile "$REPORT_DIR"
+
 PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
     --no-seeds \
     --no-dictionaries \
