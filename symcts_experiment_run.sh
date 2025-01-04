@@ -35,7 +35,7 @@ TARGETS=(libxml2_xml)
 # 2 runs * 6 fuzzers * 6 benchmarks = 72 cores
 
 EXPERIMENT_NAME="symcts-$(date +%Y%m%d-%H%M%S)"
-REPORT_DIR="/nvme/lukas/fuzzbench/report-data/$EXPERIMENT_NAME"
+REPORT_DIR="/nvme/lukas/fuzzbench/report-data/experimental/$EXPERIMENT_NAME"
 mkdir -p "$REPORT_DIR"
 cp fuzzers/symcts_afl/builder.Dockerfile "$REPORT_DIR"
 # --benchmarks libpng-1.2.56
