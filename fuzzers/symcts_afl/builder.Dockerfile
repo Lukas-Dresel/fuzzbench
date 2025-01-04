@@ -159,7 +159,7 @@ RUN git clone -b fixed/symcts-4d --recurse-submodules git@github.com:shellphish-
 RUN git clone -b fixed/symcts-4d --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
 RUN git clone -b fixed/symcts-4d https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
 
-RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
+#RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
 RUN cd /mctsse/repos/LibAFL/libafl/ && \
     git checkout fixed/symcts-4d && \
     git pull && \
@@ -169,10 +169,11 @@ RUN cd /mctsse/repos/LibAFL/libafl/ && \
 RUN cd /mctsse/ && \
     git pull && git fetch --all && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
-    cargo update -p home@0.5.11 --precise 0.5.9 && \
+    set -x && \
+    cargo update -p which --precise 4.4.0 && \
+    echo "runtime reconfigured" && \
     cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
-    cargo update -p home@0.5.11 --precise 0.5.9 && \
-    cargo update -p clap@4.5.23 --precise 4.4.18
+    cargo update -p clap@4.5.23 --precise 3.2.25
 
 RUN apt-get install -y libpolly-15-dev
 
