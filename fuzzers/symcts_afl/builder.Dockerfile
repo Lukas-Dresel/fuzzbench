@@ -76,10 +76,10 @@ RUN update-alternatives \
 
 RUN echo "rerun=21"
 RUN git clone https://github.com/Lukas-Dresel/AFLplusplus/ /afl-lukas && \
-    cd /afl-lukas && git checkout feat/larger_counters
+    cd /afl-lukas && git checkout fixed/symcts-4d
 
 
-RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/
+RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/ && cd /afl-base/ && git checkout 8e1df8e53d359f2858168a276c46d1113d4102f2
 
 
 # Prepare output dirs
