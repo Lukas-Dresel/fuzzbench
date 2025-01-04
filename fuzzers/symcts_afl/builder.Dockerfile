@@ -154,13 +154,14 @@ COPY id_rsa /root/.ssh/id_rsa
 RUN echo 'Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rsa\n' >> /root/.ssh/config
 
 # Building MCTSSE
-RUN ls -l && echo rerun=2
+RUN ls -l && echo rerun=4
 RUN git clone -b fixed/symcts-4d --recurse-submodules git@github.com:shellphish-support-syndicate/mctsse/ /mctsse
 RUN git clone -b fixed/symcts-4d --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
-RUN git clone -b pin/symcts-4d https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+RUN git clone -b fixed/symcts-4d https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
 
 RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
 RUN cd /mctsse/repos/LibAFL/libafl/ && \
+    git checkout fixed/symcts-4d && \
     git pull && \
     git fetch --all && \
     echo 3 && \
