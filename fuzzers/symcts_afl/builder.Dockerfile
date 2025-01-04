@@ -101,10 +101,10 @@ RUN cd /afl-base/ && \
 # COPY src/afl_driver.cpp /afl/afl_driver.cpp
 RUN cd /afl-lukas/ && \
     unset CFLAGS CXXFLAGS && \
-    export CC=clang-15 CXX=clang++-15 AFL_NO_X86=1 && \
-    (LLVM_CONFIG=llvm-config-15 make -j$(nproc) -k NO_NYX=1 NO_PYTHON=1 source-only || true ) && \
-    (LLVM_CONFIG=llvm-config-15 make install -k || true) && \
-    (cd utils/aflpp_driver && LLVM_CONFIG=llvm-config-15 make && cp libAFLDriver.a /libAFLDriver-lukas.a)
+    export CC=clang CXX=clang++ AFL_NO_X86=1 && \
+    (LLVM_CONFIG=llvm-config-12 make -j$(nproc) -k NO_NYX=1 NO_PYTHON=1 source-only || true ) && \
+    (LLVM_CONFIG=llvm-config-12 make install -k || true) && \
+    (cd utils/aflpp_driver && LLVM_CONFIG=llvm-config-12 make && cp libAFLDriver.a /libAFLDriver-lukas.a)
 
 
 ENV CFLAGS=""
@@ -157,7 +157,7 @@ RUN echo 'Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rs
 RUN ls -l && echo rerun=2
 RUN git clone -b fixed/symcts-4d --recurse-submodules git@github.com:shellphish-support-syndicate/mctsse/ /mctsse
 RUN git clone -b fixed/symcts-4d --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
-RUN git clone -b fixed/symcts-4d checkpoint/symcts_stable_old_version_2023-05-16-newer https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+RUN git clone -b pin/symcts-4d https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
 
 RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
 RUN cd /mctsse/repos/LibAFL/libafl/ && \
