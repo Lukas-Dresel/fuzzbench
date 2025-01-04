@@ -30,7 +30,14 @@ TARGETS=(
     woff2_convert_woff2ttf_fuzzer
     zlib_zlib_uncompress_fuzzer
 )
-TARGETS=(libxml2_xml)
+TARGETS=(
+    bloaty_fuzz_target
+    libxml2_xml
+    openh264_decoder_fuzzer
+    sqlite3_ossfuzz
+    stb_stbi_read_fuzzer
+)
+# TARGETS=(libxml2_xml)
 
 # 2 runs * 6 fuzzers * 6 benchmarks = 72 cores
 
