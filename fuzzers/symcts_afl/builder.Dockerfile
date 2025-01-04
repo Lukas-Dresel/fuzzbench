@@ -122,7 +122,7 @@ ENV LIBRARY_PATH="/z3/lib/:$LIBRARY_PATH"
 
 RUN git clone https://github.com/Lukas-Dresel/symcc.git /symcc && \
     cd /symcc && \
-    git checkout eeb643b0462edaf54c21077e9aaa28e86e932559 && \
+    git checkout fixed/symcts-4d && \
     git submodule init && \
     git submodule update
 
