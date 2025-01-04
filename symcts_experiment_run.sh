@@ -35,7 +35,9 @@ TARGETS=(libxml2_xml)
 # 2 runs * 6 fuzzers * 6 benchmarks = 72 cores
 
 EXPERIMENT_NAME="symcts-$(date +%Y%m%d-%H%M%S)"
-
+REPORT_DIR="/nvme/lukas/fuzzbench/report-data/$EXPERIMENT_NAME"
+mkdir -p "$REPORT_DIR"
+cp fuzzers/symcts_afl/builder.Dockerfile "$REPORT_DIR"
 # --benchmarks libpng-1.2.56
 # libpcap_fuzz_both vorbis-2017-12-11 woff2-2016-05-06 zlib_zlib_uncompress_fuzzer
 # --no-seeds \
@@ -50,7 +52,7 @@ PYTHON3=$(which python3 || which python3.10 || which python3.8 || which python3)
 PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
     --allow-uncommitted-changes \
     --experiment-config experiment_config_symcts.yaml \
-    --concurrent-builds 1 \
+    --concurrent-builds 4 \
     --runners-cpus 36 \
     --measurers-cpus 12 \
     --experiment-name $EXPERIMENT_NAME \
