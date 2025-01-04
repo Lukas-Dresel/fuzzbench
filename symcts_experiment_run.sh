@@ -21,6 +21,7 @@ FUZZERS=(symcc_aflplusplus symsan honggfuzz libfuzzer symcts symcts_afl symcts_s
 # TARGETS=(openssl_x509 re2_fuzzer vorbis_decode_fuzzer woff2_convert_woff2ttf_fuzzer zlib_zlib_uncompress_fuzzer)
 
 FUZZERS=(symcc_aflplusplus symsan symcts_symqemu_afl afl_companion symcts_symqemu aflplusplus)
+FUZZERS=(symcc_aflplusplus symcts_afl)
 TARGETS=(
     stb_stbi_read_fuzzer
     libpng_libpng_read_fuzzer
@@ -29,6 +30,7 @@ TARGETS=(
     woff2_convert_woff2ttf_fuzzer
     zlib_zlib_uncompress_fuzzer
 )
+TARGETS=(libxml2_xml)
 
 # 2 runs * 6 fuzzers * 6 benchmarks = 72 cores
 
@@ -38,8 +40,9 @@ EXPERIMENT_NAME="symcts-$(date +%Y%m%d-%H%M%S)"
 # libpcap_fuzz_both vorbis-2017-12-11 woff2-2016-05-06 zlib_zlib_uncompress_fuzzer
 # --no-seeds \
 
+set -x
 # use python3.10 if it exists, otherwise use python3.8 if it exists, otherwise use python3
-PYTHON3=$(which python3.10 || which python3.8 || which python3)
+PYTHON3=$(which python3 || which python3.10 || which python3.8 || which python3)
 
     # --no-seeds \
     # --no-dictionaries \
@@ -48,8 +51,8 @@ PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
     --allow-uncommitted-changes \
     --experiment-config experiment_config_symcts.yaml \
     --concurrent-builds 1 \
-    --runners-cpus 72 \
-    --measurers-cpus 24 \
+    --runners-cpus 36 \
+    --measurers-cpus 12 \
     --experiment-name $EXPERIMENT_NAME \
     --fuzzers "${FUZZERS[@]}" \
     --benchmarks "${TARGETS[@]}" \
