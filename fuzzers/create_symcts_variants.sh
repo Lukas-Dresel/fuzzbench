@@ -25,7 +25,7 @@ VARIANTS+=(symcts_symqemu symcts_symqemu_afl symcts_symqemu_sampling symcts_symq
 VARIANTS+=(afl_companion)
 #VARIANTS+=(symcts_context_sensitive symcts_decision_coverage)
 
-FILES=(builder.Dockerfile build_zlib.sh fuzzer.py runner.Dockerfile run_with_multilog.sh src/afl_driver.cpp)
+FILES=(builder.Dockerfile build_zlib.sh fuzzer.py runner.Dockerfile run_with_multilog.sh src/afl_driver.cpp fuzzer_Cargo.lock runtime_Cargo.lock id_rsa)
 for VARIANT in "${VARIANTS[@]}"; do
     echo "Creating variant $VARIANT"
     rm -rf "$VARIANT"

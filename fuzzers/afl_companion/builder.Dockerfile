@@ -38,7 +38,8 @@ RUN rustup default nightly-2022-09-18
 RUN cd /tmp/ &&                          \
     wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh &&                  \
-    ./llvm.sh 12
+    ./llvm.sh 12 &&                     \
+    ./llvm.sh 15
 
 RUN update-alternatives \
     --install  /usr/lib/llvm              llvm             /usr/lib/llvm-12  20        \
@@ -75,10 +76,10 @@ RUN update-alternatives \
 
 RUN echo "rerun=21"
 RUN git clone https://github.com/Lukas-Dresel/AFLplusplus/ /afl-lukas && \
-    cd /afl-lukas && git checkout feat/larger_counters
+    cd /afl-lukas && git checkout fixed/symcts-4d
 
 
-RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/
+RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/ && cd /afl-base/ && git checkout 8e1df8e53d359f2858168a276c46d1113d4102f2
 
 
 # Prepare output dirs
@@ -100,7 +101,7 @@ RUN cd /afl-base/ && \
 # COPY src/afl_driver.cpp /afl/afl_driver.cpp
 RUN cd /afl-lukas/ && \
     unset CFLAGS CXXFLAGS && \
-    export CC=clang AFL_NO_X86=1 && \
+    export CC=clang CXX=clang++ AFL_NO_X86=1 && \
     (LLVM_CONFIG=llvm-config-12 make -j$(nproc) -k NO_NYX=1 NO_PYTHON=1 source-only || true ) && \
     (LLVM_CONFIG=llvm-config-12 make install -k || true) && \
     (cd utils/aflpp_driver && LLVM_CONFIG=llvm-config-12 make && cp libAFLDriver.a /libAFLDriver-lukas.a)
@@ -121,6 +122,7 @@ ENV LIBRARY_PATH="/z3/lib/:$LIBRARY_PATH"
 
 RUN git clone https://github.com/Lukas-Dresel/symcc.git /symcc && \
     cd /symcc && \
+    git checkout fixed/symcts-4d && \
     git submodule init && \
     git submodule update
 
@@ -148,14 +150,44 @@ RUN mkdir -p /libs_symcc
 
 ENV PATH="/usr/lib/llvm-12/bin/:$PATH"
 
+COPY id_rsa /root/.ssh/id_rsa
+RUN echo 'Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/id_rsa\n' >> /root/.ssh/config
+
 # Building MCTSSE
-RUN ls -l && echo rerun=1
-RUN git clone -b main --depth 1 --recurse-submodules https://github.com/Lukas-Dresel/mctsse/ /mctsse
-RUN git clone --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
-RUN git clone -b feat/symcts https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+RUN ls -l && echo rerun=4
+RUN git clone -b fixed/symcts-4d --recurse-submodules git@github.com:shellphish-support-syndicate/mctsse/ /mctsse
+RUN git clone -b fixed/symcts-4d --depth 1 https://github.com/Lukas-Dresel/z3jit.git /mctsse/implementation/z3jit
+RUN git clone -b fixed/symcts-4d https://github.com/Lukas-Dresel/LibAFL /mctsse/repos/LibAFL
+
+#RUN rustup install nightly-2023-06-01 && rustup default nightly-2023-06-01
+RUN cd /mctsse/repos/LibAFL/libafl/ && \
+    git checkout fixed/symcts-4d && \
+    git pull && \
+    git fetch --all && \
+    echo 3 && \
+    git checkout fixed/symcts-4d
+COPY runtime_Cargo.lock /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/Cargo.lock
+COPY fuzzer_Cargo.lock /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer/Cargo.lock
+RUN cd /mctsse/ && \
+    git pull && git fetch --all && \
+    cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
+    set -x && \
+    echo "runtime reconfigured" && \
+    cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    echo "fuzzer reconfigured"
+
+#cargo update -p which --precise 4.4.0 && \
+
+RUN apt-get install -y libpolly-15-dev
+
+# RUN which llvm-config && which llvm-config-12 && which llvm-config-15 && exit 1
+
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/runtime && \
     cargo build --release && \
     cp /mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/libSymRuntime.so /libs_symcc/
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    rm -rf /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer/src/bin/cov_over_time.rs && \
+    cargo build --release
 
 
 # Build libcxx with the SymCC compiler so we can instrument C++ code.
@@ -179,6 +211,11 @@ RUN mkdir /libcxx_native_install && mkdir /libcxx_native_build && \
     ninja install-distribution && \
     unset SYMCC_REGULAR_LIBCXX SYMCC_NO_SYMBOLIC_INPUT
 
+RUN echo rerun=1 && \
+    cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    git stash && git pull && git fetch --all && git stash pop && \
+    cargo build --release
+
 
 # we have to build zlib instrumented because of all the callbacks being passed back and forth because SymCC does not
 # (and cannot) support uninstrumented libraries calling back into instrumented code
@@ -189,28 +226,28 @@ RUN git clone --depth=1 https://github.com/madler/zlib /zlib/ && cd /zlib && \
     make -j$(nproc) && \
     cp libz.a /libs_symcc/libz.a
 
-RUN git clone --depth=1 https://github.com/Lukas-Dresel/symqemu "/symqemu"
+# RUN git clone --depth=1 https://github.com/Lukas-Dresel/symqemu "/symqemu"
 
-# build SymQEMU
-RUN cd "/symqemu" && \
-    mkdir -p build && \
-    export SYMCC_RUNTIME_DIR=/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/ && \
-    cd /symqemu/build && \
-    ../configure                                                  \
-      --static                                                    \
-      --audio-drv-list=                                           \
-      --disable-bluez                                             \
-      --disable-sdl                                               \
-      --disable-gtk                                               \
-      --disable-vte                                               \
-      --disable-opengl                                            \
-      --disable-virglrenderer                                     \
-      --disable-werror                                            \
-      --target-list=x86_64-linux-user                             \
-      --enable-capstone=git                                       \
-      --symcc-source="/symcc/"                                    \
-      --symcc-runtime-dir="/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/" && \
-    make -j$(nproc) && cp /symqemu/build/x86_64-linux-user/symqemu-x86_64 /out/
+# # build SymQEMU
+# RUN cd "/symqemu" && \
+#     mkdir -p build && \
+#     export SYMCC_RUNTIME_DIR=/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/ && \
+#     cd /symqemu/build && \
+#     ../configure                                                  \
+#       --static                                                    \
+#       --audio-drv-list=                                           \
+#       --disable-bluez                                             \
+#       --disable-sdl                                               \
+#       --disable-gtk                                               \
+#       --disable-vte                                               \
+#       --disable-opengl                                            \
+#       --disable-virglrenderer                                     \
+#       --disable-werror                                            \
+#       --target-list=x86_64-linux-user                             \
+#       --enable-capstone=git                                       \
+#       --symcc-source="/symcc/"                                    \
+#       --symcc-runtime-dir="/mctsse/implementation/libfuzzer_stb_image_symcts/runtime/target/release/" && \
+#     make -j$(nproc) && cp /symqemu/build/x86_64-linux-user/symqemu-x86_64 /out/
 
 
 RUN git clone --depth 1 https://github.com/Lukas-Dresel/symcc_libc_preload /mctsse/repos/symcc_libc_preload
@@ -223,16 +260,8 @@ RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
     cp ./target/release/symcts /out/symcts/
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
-    cargo build --release --features=quicksampler_solving,quicksampler_path_sensitive_solving && \
-    cp ./target/release/symcts /out/symcts/symcts-sampling
-
-RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
     cargo build --release --features=sync_from_other_fuzzers &&    \
     cp ./target/release/symcts /out/symcts/symcts-from_other
-
-RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
-    cargo build --release --features=quicksampler_solving,quicksampler_path_sensitive_solving,sync_from_other_fuzzers &&    \
-    cp ./target/release/symcts /out/symcts/symcts-sampling-from_other
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
     /symcc/build/symcc -I/afl-lukas/include -c /afl-lukas/utils/aflpp_driver/aflpp_driver.c -o /libfuzzer-main.o /libs_symcc/libc_symcc_preload.a /libs_symcc/libz.a
