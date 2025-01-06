@@ -21,7 +21,7 @@ FUZZERS=(symcc_aflplusplus symsan honggfuzz libfuzzer symcts symcts_afl symcts_s
 # TARGETS=(openssl_x509 re2_fuzzer vorbis_decode_fuzzer woff2_convert_woff2ttf_fuzzer zlib_zlib_uncompress_fuzzer)
 
 FUZZERS=(symcc_aflplusplus symsan symcts_symqemu_afl afl_companion symcts_symqemu aflplusplus)
-FUZZERS=(symcc_aflplusplus symcts_afl)
+FUZZERS=(symcc_aflplusplus afl_companion symcts_afl symcts_afl__working symcts_afl__broken)
 TARGETS=(
     stb_stbi_read_fuzzer
     libpng_libpng_read_fuzzer
@@ -37,7 +37,7 @@ TARGETS=(
     sqlite3_ossfuzz
     stb_stbi_read_fuzzer
 )
-# TARGETS=(libxml2_xml)
+TARGETS=(libxml2_xml)
 
 # 2 runs * 6 fuzzers * 6 benchmarks = 72 cores
 
