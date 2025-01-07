@@ -258,12 +258,53 @@ RUN cd /mctsse/repos/symcc_libc_preload && \
     cp /mctsse/repos/symcc_libc_preload/libc_symcc_preload.a /libs_symcc/
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    git fetch --all && \
+    git checkout feat/usenix-ablations && \
     cargo build --release && \
     cp ./target/release/symcts /out/symcts/
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
     cargo build --release --features=sync_from_other_fuzzers &&    \
     cp ./target/release/symcts /out/symcts/symcts-from_other
+
+
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,default_fuzzbench --features=scheduling_symcc && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-scheduling-symcc
+
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,baseline,mutations_default,coverage_default,scheduling_uniform_random,scheduling_weight_function_sampling_counts,sync_default,resource_tracking_default && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-scheduling-uniform-random
+
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,default_fuzzbench --features=coverage_single_level && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-coverage-edge-coverage
+
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,default_fuzzbench --features=mutation_full_solve_first && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-mutation-full-solve-first
+
+# no sync_only_when_stuck enabled, always sync from the fuzzer immediately
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,baseline,mutations_default,coverage_default,scheduling_default,sync_from_other_fuzzers,resource_tracking_default && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-sync-always-sync
+
+# mimic symcc closely, edge-coverage, full-solve-first, sync when not stuck
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,baseline,mutations_default,coverage_default,scheduling_default,sync_from_other_fuzzers,mutation_full_solve_first,coverage_single_level,scheduling_symcc,resource_tracking_default && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-symcts-as-symcc
+
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=sync_from_other_fuzzers,default_fuzzbench,resource_tracking && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-resource-tracking
+
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release  --bin symcts --no-default-features --features=default_fuzzbench,resource_tracking,resource_tracking_per_branch && \
+    cp ./target/release/symcts /out/symcts/symcts-from_other-ablation-resource-tracking-per-branch
+
+# build all the other binaries with default features
+RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
+    cargo build --release
 
 RUN cd /mctsse/implementation/libfuzzer_stb_image_symcts/fuzzer && \
     /symcc/build/symcc -I/afl-lukas/include -c /afl-lukas/utils/aflpp_driver/aflpp_driver.c -o /libfuzzer-main.o /libs_symcc/libc_symcc_preload.a /libs_symcc/libz.a

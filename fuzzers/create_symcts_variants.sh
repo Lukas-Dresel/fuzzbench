@@ -25,7 +25,18 @@ VARIANTS+=(symcts_symqemu symcts_symqemu_afl symcts_symqemu_sampling symcts_symq
 VARIANTS+=(afl_companion)
 #VARIANTS+=(symcts_context_sensitive symcts_decision_coverage)
 
+ABLATIONS=(scheduling_symcc)
+ABLATIONS+=(coverage_edge_coverage)
+ABLATIONS+=(mutation_full_solve_first)
+ABLATIONS+=(sync_always_sync)
+ABLATIONS+=(symcts_as_symcc)
+ABLATIONS+=(resource_tracking resource_tracking_per_branch)
+for ABLATION in "${ABLATIONS[@]}"; do
+    VARIANTS+=("symcts_afl_ablation_${ABLATION}")
+done
+
 FILES=(builder.Dockerfile build_zlib.sh fuzzer.py runner.Dockerfile run_with_multilog.sh src/afl_driver.cpp fuzzer_Cargo.lock runtime_Cargo.lock id_rsa)
+
 for VARIANT in "${VARIANTS[@]}"; do
     echo "Creating variant $VARIANT"
     rm -rf "$VARIANT"
