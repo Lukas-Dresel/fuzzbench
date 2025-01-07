@@ -1,0 +1,4 @@
+Host symcts-4d-clean
+	User ubuntu
+	HostName 54.67.98.137
+	IdentityFile ~/.ssh/fuzzbench_download.pem
