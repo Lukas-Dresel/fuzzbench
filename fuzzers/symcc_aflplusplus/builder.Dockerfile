@@ -41,7 +41,7 @@ RUN cd /afl && unset CFLAGS && unset CXXFLAGS && \
     cp utils/aflpp_driver/libAFLDriver.a /
 
 # Install the packages we need.
-RUN apt-get install -y ninja-build flex bison python zlib1g-dev
+RUN apt-get update && apt-get install -y ninja-build flex bison python zlib1g-dev
 
 # RUN rm -rf /usr/local/bin/cargo
 
