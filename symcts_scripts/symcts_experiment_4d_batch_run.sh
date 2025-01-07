@@ -24,8 +24,8 @@ case $BATCH_NUM in
         EXPERIMENT_NAME="4d1-blty-zlib-$(date +%Y%m%d-%H%M%S)"
         ;;
     2)
-        TARGETS=(curl_curl_fuzzer_http freetype2_ftfuzzer)
-        EXPERIMENT_NAME="4d2-curl-ft-$(date +%Y%m%d-%H%M%S)"
+        TARGETS=(libpng_libpng_read_fuzzer freetype2_ftfuzzer)
+        EXPERIMENT_NAME="4d2-lpng-ft-$(date +%Y%m%d-%H%M%S)"
         ;;
     3)
         TARGETS=(harfbuzz_hb-shape-fuzzer jsoncpp_jsoncpp_fuzzer)
@@ -36,12 +36,12 @@ case $BATCH_NUM in
         EXPERIMENT_NAME="4d4-lcms-ljpg-$(date +%Y%m%d-%H%M%S)"
         ;;
     5)
-        TARGETS=(libpcap_fuzz_both libpng_libpng_read_fuzzer)
-        EXPERIMENT_NAME="4d5-lpcp-lpng-$(date +%Y%m%d-%H%M%S)"
+        TARGETS=(libpcap_fuzz_both curl_curl_fuzzer_http)
+        EXPERIMENT_NAME="4d5-lpcp-curl-$(date +%Y%m%d-%H%M%S)"
         ;;
     6)
-        TARGETS=(libxml2_xml libxslt_xpath)
-        EXPERIMENT_NAME="4d6-lxml-xslt-$(date +%Y%m%d-%H%M%S)"
+        TARGETS=(libxml2_xml stb_stbi_read_fuzzer)
+        EXPERIMENT_NAME="4d6-lxml-stb-$(date +%Y%m%d-%H%M%S)"
         ;;
     7)
         TARGETS=(openh264_decoder_fuzzer openssl_x509)
@@ -56,8 +56,8 @@ case $BATCH_NUM in
         EXPERIMENT_NAME="4d9-re2-sqlt-$(date +%Y%m%d-%H%M%S)"
         ;;
     10)
-        TARGETS=(stb_stbi_read_fuzzer systemd_fuzz-link-parser)
-        EXPERIMENT_NAME="4d10-stb-sysd-$(date +%Y%m%d-%H%M%S)"
+        TARGETS=(libxslt_xpath systemd_fuzz-link-parser)
+        EXPERIMENT_NAME="4d10-xslt-sysd-$(date +%Y%m%d-%H%M%S)"
         ;;
     11)
         TARGETS=(vorbis_decode_fuzzer woff2_convert_woff2ttf_fuzzer)
