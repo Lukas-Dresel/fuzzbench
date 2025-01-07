@@ -29,7 +29,7 @@ RUN wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 12
 # Download and compile afl++.
 RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl && \
     cd /afl && \
-    git checkout 33eba1fc5652060e8d877b02135fce2325813d0c && \
+    git checkout 8fc249d210ad49e3dd88d1409877ca64d9884690 && \
     unset CFLAGS && unset CXXFLAGS && \
     export CC=clang && export AFL_NO_X86=1 && \
     PYTHON_INCLUDE=/ make && make install && \

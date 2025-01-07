@@ -16,7 +16,7 @@
 
 BATCH_NUM=$1
 
-FUZZERS=(aflplusplus symcts symcts_symqemu symcts_symqemu_afl symcts_afl symsan symcc_aflplusplus)
+FUZZERS=(afl_companion symcts symcts_symqemu symcts_symqemu_afl symcts_afl symsan symcc_aflplusplus)
 
 case $BATCH_NUM in
     1)

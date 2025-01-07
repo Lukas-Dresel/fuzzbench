@@ -79,7 +79,7 @@ RUN git clone https://github.com/Lukas-Dresel/AFLplusplus/ /afl-lukas && \
     cd /afl-lukas && git checkout fixed/symcts-4d
 
 
-RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/ && cd /afl-base/ && git checkout 8e1df8e53d359f2858168a276c46d1113d4102f2
+RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl-base/ && cd /afl-base/ && git checkout 8fc249d210ad49e3dd88d1409877ca64d9884690
 
 
 # Prepare output dirs
