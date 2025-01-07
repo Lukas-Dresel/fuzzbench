@@ -35,6 +35,7 @@ TARGETS=(
     sqlite3_ossfuzz
     openh264_decoder_fuzzer
     stb_stbi_read_fuzzer
+    openthread_ot-ip6-send-fuzzer
 )
 
 
