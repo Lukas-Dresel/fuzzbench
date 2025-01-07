@@ -288,6 +288,7 @@ RUN cp /libcxx_native_build/lib/libc++abi.so.1 /out/instrumented/symcts
 
 # Remove stuff that we don't need
 # RUN rm -rf /mctsse /llvm_source /symqemu /root/.cache/ /root/.rustup
+RUN rm -rf test.o test.c
 RUN git config --global --add safe.directory '*'
 
 # copy the run_with_multilog.sh script to the output directory as an executable
