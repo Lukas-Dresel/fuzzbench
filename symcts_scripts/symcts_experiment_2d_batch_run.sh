@@ -90,7 +90,7 @@ PYTHON3=$(which python3.10 || which python3)
 
 PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
     --allow-uncommitted-changes \
-    --experiment-config experiment_config_2d_batch.yaml \
+    --experiment-config symcts_scripts/experiment_config_2d_batch.yaml \
     --concurrent-builds 1 \
     --runners-cpus 70 \
     --measurers-cpus 26 \

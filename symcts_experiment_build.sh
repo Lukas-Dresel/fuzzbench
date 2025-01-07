@@ -16,7 +16,7 @@
 FUZZERS=(symcc_aflplusplus symsan honggfuzz libfuzzer symcts symcts_afl symcts_symqemu_afl aflplusplus)
 TARGETS=(curl_curl_fuzzer_http harfbuzz_hb-shape-fuzzer jsoncpp_jsoncpp_fuzzer libpng_libpng_read_fuzzer libxml2_xml libxslt_xpath mbedtls_fuzz_dtlsclient openssl_x509 php_php-fuzz-parser re2_fuzzer vorbis_decode_fuzzer woff2_convert_woff2ttf_fuzzer zlib_zlib_uncompress_fuzzer)
 
-FUZZERS=(symcc_aflplusplus afl_companion symcts_afl symcts_afl__working symcts_afl__broken)
+FUZZERS=(symcc_aflplusplus afl_companion symcts_afl)
 
 TARGETS=(
     libxml2_xml
