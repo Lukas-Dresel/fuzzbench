@@ -69,6 +69,16 @@ case $BATCH_NUM in
         ;;
 esac
 
+REPORT_DIR="/nvme/lukas/fuzzbench/report-data/experimental/$EXPERIMENT_NAME"
+mkdir -p "$REPORT_DIR"
+cp fuzzers/symcts_afl/builder.Dockerfile "$REPORT_DIR"
+echo "2d fuzzbench run: $(date)" > "$REPORT_DIR/comment.txt"
+git rev-parse HEAD > "$REPORT_DIR/git-rev.txt"
+git show > "$REPORT_DIR/git-show.txt"
+git diff > "$REPORT_DIR/git-diff.txt"
+rsync --exclude=.venv -ravz ./ "$REPORT_DIR/fuzzbench_source"
+echo "Log dir: $REPORT_DIR"
+
 
 
 
