@@ -21,7 +21,7 @@ FUZZERS=(symcc_aflplusplus symsan honggfuzz libfuzzer symcts symcts_afl symcts_s
 # TARGETS=(openssl_x509 re2_fuzzer vorbis_decode_fuzzer woff2_convert_woff2ttf_fuzzer zlib_zlib_uncompress_fuzzer)
 
 FUZZERS=(symcc_aflplusplus symsan symcts_symqemu_afl afl_companion symcts_symqemu aflplusplus)
-FUZZERS=(symcc_aflplusplus afl_companion symcts_afl symcts_afl__working symcts_afl__broken)
+FUZZERS=(symcc_aflplusplus afl_companion symcts_afl)
 TARGETS=(
     stb_stbi_read_fuzzer
     libpng_libpng_read_fuzzer
@@ -63,6 +63,8 @@ PYTHON3=$(which python3 || which python3.10 || which python3.8 || which python3)
     # --no-dictionaries \
 
 PYTHONPATH=. "$PYTHON3" experiment/run_experiment.py \
+    --no-seeds \
+    --no-dictionaries \
     --allow-uncommitted-changes \
     --experiment-config experiment_config_symcts.yaml \
     --concurrent-builds 4 \
