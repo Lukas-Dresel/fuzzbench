@@ -90,11 +90,13 @@ RUN mkdir -p /out/afl /out/symcts /out/instrumented/symcts /out/instrumented/afl
 # COPY src/afl_driver.cpp /afl/afl_driver.cpp
 RUN cd /afl-base/ && \
     unset CFLAGS CXXFLAGS && \
-    export CC=clang AFL_NO_X86=1 && \
+    export LLVM_CONFIG=llvm-config-12 CC=clang-12 CXX=clang++-12 AFL_NO_X86=1 && \
     make -j$(nproc) NO_NYX=1 NO_PYTHON=1 source-only && \
     make install && \
     cp utils/aflpp_driver/libAFLDriver.a /libAFLDriver-base.a && \
     cp -r /afl-base/ /afl/
+
+RUN echo 'int main() {}' > test.c && /afl-base/afl-clang-fast -o test.o test.c
 
 # Build without Python support as we don't need it.
 # Set AFL_NO_X86 to skip flaky tests.
