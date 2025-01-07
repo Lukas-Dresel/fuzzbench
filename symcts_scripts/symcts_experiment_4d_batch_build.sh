@@ -40,11 +40,11 @@ case $BATCH_NUM in
         EXPERIMENT_NAME="4d5-lpcp-lpng-$(date +%Y%m%d-%H%M%S)"
         ;;
     6)
-        TARGETS=(libxml2_xml libxslt_xpath)
-        EXPERIMENT_NAME="4d6-lxml-xslt-$(date +%Y%m%d-%H%M%S)"
+        TARGETS=(libxml2_xml systemd_fuzz-link-parser)
+        EXPERIMENT_NAME="4d6-lxml-sysd-$(date +%Y%m%d-%H%M%S)"
         ;;
     7)
-        TARGETS=( openssl_x509)
+        TARGETS=(openh264_decoder_fuzzer openssl_x509)
         EXPERIMENT_NAME="4d7-oh264-ssl-$(date +%Y%m%d-%H%M%S)"
         ;;
     8)
@@ -56,8 +56,8 @@ case $BATCH_NUM in
         EXPERIMENT_NAME="4d9-re2-sqlt-$(date +%Y%m%d-%H%M%S)"
         ;;
     10)
-        TARGETS=(stb_stbi_read_fuzzer systemd_fuzz-link-parser)
-        EXPERIMENT_NAME="4d10-stb-sysd-$(date +%Y%m%d-%H%M%S)"
+        TARGETS=(stb_stbi_read_fuzzer libxslt_xpath)
+        EXPERIMENT_NAME="4d10-stb-xslt-$(date +%Y%m%d-%H%M%S)"
         ;;
     11)
         TARGETS=(vorbis_decode_fuzzer woff2_convert_woff2ttf_fuzzer)

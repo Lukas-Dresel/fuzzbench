@@ -5,7 +5,7 @@ SCRIPT_DIR=$(dirname $(realpath $0))
 SSH_CONFIG_PATH="$SCRIPT_DIR/ssh_config"
 # HOSTS=($(grep -oP 'Host \K.*' $SSH_CONFIG_PATH))
 HOSTS=()
-for i in $(seq 1 6); do HOSTS+=("symcts-2d-$i"); done
+for i in $(seq 1 11); do HOSTS+=("symcts-2d-$i"); done
 
 FUZZBENCH_ROOT_DIR=$(realpath "$SCRIPT_DIR/../../")
 
