@@ -35,7 +35,7 @@ RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl && \
 # Build without Python support as we don't need it.
 # Set AFL_NO_X86 to skip flaky tests.
 RUN cd /afl && unset CFLAGS && unset CXXFLAGS && \
-    export CC=clang && export AFL_NO_X86=1 && \
+    export LLVM_CONFIG=$(which llvm-config-12) CC=clang-12 CXX=clang++-12 && export AFL_NO_X86=1 && \
     PYTHON_INCLUDE=/ make && make install && \
     make -j4 -C utils/aflpp_driver && \
     cp utils/aflpp_driver/libAFLDriver.a /
