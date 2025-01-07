@@ -27,6 +27,7 @@ fi
 I386_PACKAGES="zlib1g-dev:i386 libssl-dev:i386 libsqlite3-dev:i386"
 X64_PACKAGES="zlib1g-dev libssl-dev libsqlite3-dev"
 
+apt-get update
 if [ "$ARCHITECTURE" = "i386" ]; then
     apt-get install -y $I386_PACKAGES
 else
