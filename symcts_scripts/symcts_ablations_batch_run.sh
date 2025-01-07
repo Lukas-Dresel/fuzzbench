@@ -39,10 +39,8 @@ case $BATCH_NUM in
         EXPERIMENT_NAME="ablt-o264-sqlt-$(date +%Y%m%d-%H%M%S)"
         ;;
     3)
-        TARGETS=(libxml2_xml)
-        EXPERIMENT_NAME="ablt-lxml-$(date +%Y%m%d-%H%M%S)"
-        RUNNERS_CPUS=35
-        MEASURERS_CPUS=13
+        TARGETS=(libxml2_xml openthread_ot-ip6-send-fuzzer)
+        EXPERIMENT_NAME="ablt-lxml-ot-$(date +%Y%m%d-%H%M%S)"
         ;;
 esac
 
