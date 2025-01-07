@@ -31,7 +31,7 @@ RUN git clone https://github.com/AFLplusplus/AFLplusplus.git /afl && \
     cd /afl && \
     git checkout 8fc249d210ad49e3dd88d1409877ca64d9884690 && \
     unset CFLAGS && unset CXXFLAGS && \
-    export CC=clang && export AFL_NO_X86=1 && \
+    export LLVM_CONFIG=$(which llvm-config-12) CC=clang-12 CXX=clang++-12 && export AFL_NO_X86=1 && \
     PYTHON_INCLUDE=/ make && make install && \
     cp utils/aflpp_driver/libAFLDriver.a /
 
