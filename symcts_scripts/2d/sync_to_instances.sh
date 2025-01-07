@@ -13,7 +13,7 @@ set -x
 for host in ${HOSTS[@]}
 do
     echo "Syncing to $host"
-    rsync -ravz --exclude=.venv "$FUZZBENCH_ROOT_DIR/" "$host:~/lukas/research/mctsse/repos/fuzzbench/"
+    rsync -ravz --exclude=generated.mk --exclude=.venv "$FUZZBENCH_ROOT_DIR/" "$host:~/lukas/research/mctsse/repos/fuzzbench/"
     rsync -raz ~/.ssh/id_rsa "$host:~/.ssh/"
     rsync -raz "$SCRIPT_DIR/.bash_aliases" "$host:~/"
 done
