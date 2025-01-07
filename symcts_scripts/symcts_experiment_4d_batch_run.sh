@@ -71,6 +71,8 @@ esac
 
 
 REPORT_DIR="/nvme/lukas/fuzzbench/report-data/experimental/$EXPERIMENT_NAME"
+
+sudo chown -R $(whoami):$whoami "/nvme/lukas/fuzzbench" || true
 mkdir -p "$REPORT_DIR"
 cp fuzzers/symcts_afl/builder.Dockerfile "$REPORT_DIR"
 echo "4d fuzzbench run: $(date)" > "$REPORT_DIR/comment.txt"

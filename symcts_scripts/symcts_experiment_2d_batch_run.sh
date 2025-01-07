@@ -70,6 +70,8 @@ case $BATCH_NUM in
 esac
 
 REPORT_DIR="/nvme/lukas/fuzzbench/report-data/experimental/$EXPERIMENT_NAME"
+
+sudo chown -R $(whoami):$whoami "/nvme/lukas/fuzzbench" || true
 mkdir -p "$REPORT_DIR"
 cp fuzzers/symcts_afl/builder.Dockerfile "$REPORT_DIR"
 echo "2d fuzzbench run: BATCH #${BATCH_NUM} $(date)" > "$REPORT_DIR/comment.txt"
