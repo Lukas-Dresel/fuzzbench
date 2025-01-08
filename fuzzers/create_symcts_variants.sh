@@ -25,7 +25,7 @@ VARIANTS+=(symcts_symqemu symcts_symqemu_afl symcts_symqemu_sampling symcts_symq
 VARIANTS+=(afl_companion)
 #VARIANTS+=(symcts_context_sensitive symcts_decision_coverage)
 
-ABLATIONS=(scheduling_symcc)
+ABLATIONS=(scheduling_symcc scheduling_uniform_random)
 ABLATIONS+=(coverage_edge_coverage)
 ABLATIONS+=(mutation_full_solve_first)
 ABLATIONS+=(sync_always_sync)

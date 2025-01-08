@@ -19,10 +19,11 @@ BATCH_NUM=$1
 FUZZERS=(symcc_aflplusplus symcts_afl)
 FUZZERS+=(
     symcts_afl_ablation_scheduling_symcc
+    symcts_afl_ablation_scheduling_uniform_random
     symcts_afl_ablation_coverage_edge_coverage
     symcts_afl_ablation_mutation_full_solve_first
     symcts_afl_ablation_sync_always_sync
-    symcts_afl_ablation_symcts_as_symcc
+    # symcts_afl_ablation_symcts_as_symcc
 )
 case $BATCH_NUM in
     1)

@@ -24,7 +24,8 @@ FUZZERS+=(
     symcts_afl_ablation_coverage_edge_coverage
     symcts_afl_ablation_mutation_full_solve_first
     symcts_afl_ablation_sync_always_sync
-    symcts_afl_ablation_symcts_as_symcc
+    # symcts_afl_ablation_symcts_as_symcc
+    symcts_afl_ablation_scheduling_uniform_random
 )
 
 RUNNERS_CPUS=70
