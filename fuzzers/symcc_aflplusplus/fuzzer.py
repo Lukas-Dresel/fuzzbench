@@ -168,7 +168,7 @@ def fuzz(input_corpus, output_corpus, target_binary):
     time.sleep(5)
     launch_afl_thread(input_corpus, output_corpus, target_binary,
                       ['-S', 'afl-secondary'] + flags_cmplog + flags_dict)
-    while not os.path.exists('/out/corpus/afl-secondary/fuzzer_stats'):
+    while not os.path.exists(os.environ['OUT'] + '/out/corpus/afl-secondary/fuzzer_stats'):
         time.sleep(1)
 
     # Start an instance of SymCC.
