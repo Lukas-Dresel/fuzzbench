@@ -9,7 +9,7 @@ mkdir -p "$LOG_DIR/stdout" "$LOG_DIR/stderr"
 
 keep_wiping_core_files() {
     while true; do
-        find /out -name 'core.*' -exec rm -f {} \;
+        find $OUT/ -name 'core.*' -exec rm -f {} \;
         sleep 5
     done
 }
