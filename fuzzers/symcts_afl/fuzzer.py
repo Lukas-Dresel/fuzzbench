@@ -65,7 +65,7 @@ def restore_env():
 def build_vanilla(build_out, src, work):
     new_env = os.environ.copy()
     new_env['OUT'] = build_out
-    new_env['FUZZER_LIB'] = '/out/instrumented/aflpp_driver.o'
+    new_env['FUZZER_LIB'] = os.environ['OUT'] + '/instrumented/aflpp_driver.o'
 
     with utils.restore_directory(src), utils.restore_directory(work):
         utils.build_benchmark(env=new_env)
@@ -240,7 +240,7 @@ def fuzz(input_corpus, output_corpus, target_binary, with_afl=False):
                           ['-d'] + flag_dict + flag_cmplog)
 
     if 'symcts' in fuzzer:  #  for afl_companion, we'd like to only start afl
-        symcts_bin = '/out/symcts/symcts'
+        symcts_bin = os.environ['OUT'] + '/symcts/symcts'
         if 'sampling' in fuzzer:
             symcts_bin += '-sampling'
         if 'afl' in fuzzer:
@@ -250,7 +250,7 @@ def fuzz(input_corpus, output_corpus, target_binary, with_afl=False):
             symcts_bin += '-ablation' + ablation_bin
 
         cmd = [
-            '/out/run_with_multilog.sh', os.path.join(output_corpus, '.log_symcts'),
+            os.environ['OUT'] + '/run_with_multilog.sh', os.path.join(output_corpus, '.log_symcts'),
             symcts_bin, '-i', input_corpus, '-s', output_corpus, '-n', 'symcts',
             '--symqemu',
             join(out_dir, 'symqemu-x86_64'), '--afl-coverage-target',
