@@ -226,8 +226,8 @@ def fuzz(input_corpus, output_corpus, target_binary, with_afl=False):
         afl_fuzzer.prepare_fuzz_environment(input_corpus)
 
         # Keep  /afl pointing to /afl-base forever..
-        with link_base_afl(delete=False):
-            pass
+        # with link_base_afl(delete=False):
+        #     pass
 
         # launch_afl_thread(input_corpus, output_corpus, target_binary,
         #                   flag_cmplog + flag_dict + ['-M', 'afl-main'])
