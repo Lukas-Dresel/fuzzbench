@@ -329,10 +329,10 @@ def fuzz(input_corpus, output_corpus, target_binary, flags=tuple(), skip=False):
     print('target binary is ' + target_binary)
     #run fastgen
     fastgen_cmd = [
-        '/bin/bash', '-ex', '/out/fuz.sh', symsantrack_binary, symsanfast_binary
+        '/bin/bash', '-ex', os.environ['OUT'] + '/fuz.sh', symsantrack_binary, symsanfast_binary
     ]
     fastgen_restart_cmd = [
-        '/bin/bash', '-ex', '/out/fres.sh', symsantrack_binary,
+        '/bin/bash', '-ex', os.environ['OUT'] + '/fres.sh', symsantrack_binary,
         symsanfast_binary
     ]
 

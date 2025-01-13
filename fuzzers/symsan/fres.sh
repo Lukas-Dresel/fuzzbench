@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RUST_LOG=info /out/run_with_multilog.sh /out/corpus/.log_res /out/fastgen --sync_afl -i - -o /out/corpus -t $1 -- $2 @@
+RUST_LOG=info $OUT/run_with_multilog.sh $OUT/corpus/.log_res $OUT/fastgen --sync_afl -i - -o $OUT/corpus -t $1 -- $2 @@
